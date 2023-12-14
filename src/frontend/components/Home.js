@@ -1,23 +1,36 @@
 import { useState, useEffect } from 'react'
 import { ethers } from "ethers"
 import { Row, Col, Card, Button } from 'react-bootstrap'
+import axios from 'axios'
 
 const Home = ({ marketplace, nft }) => {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState([])
+  const url = require('url')
 
   const loadMarketplaceItems = async () => {
     // Load all unsold items
     const itemCount = await marketplace.itemCount()
-    let items = []
+    console.log("Number of tokens: " +itemCount)
+
+    let items = [] // the array we will fetch metadata from pinata
+
     for (let i = 1; i <= itemCount; i++) {
-      const item = await marketplace.items(i)//láy nft
+
+      const item = await marketplace.items(i)//info of NFT include 
+      
+      console.log("The item of marketplace: "+item)
+
       if (!item.sold) {
         // get uri url from nft contract
-        const uri = await nft.tokenURI(item.tokenId)
+        const uri = await nft.tokenURI(item.tokenId)//link of nft info
+        console.log("Information of NFT: "+uri)
+
         // use uri to fetch the nft metadata stored on ipfs 
-        const response = await fetch(uri)
+       const response = await fetch('https://'+ uri)//get values of the uri 
         const metadata = await response.json() //IPFS storage
+        console.log(metadata)
+
         // get total price of item (item price + fee)
         const totalPrice = await marketplace.getTotalPrice(item.itemId)
         // Add item to items array
@@ -28,13 +41,24 @@ const Home = ({ marketplace, nft }) => {
           //ipfs storage info
           name: metadata.name,
           description: metadata.description,
-          image: metadata.image
+          image: 'https://'+ metadata.image
         })
       }
     }
     setLoading(false)
     setItems(items)
   }
+
+  async function fetchJsonFromPinata(pinataUrl) {
+    try {
+        const response = await axios.get(pinataUrl);
+        const jsonData = response.data;
+        console.log('Fetched JSON Data:', jsonData);
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+
   //mua bất động sản
   const buyMarketItem = async (item) => {
     await (await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })).wait()
@@ -48,7 +72,7 @@ const Home = ({ marketplace, nft }) => {
 
   if (loading) return (
     <main style={{ padding: "1rem 0" }}>
-      <h2>Đang tải thị trường...</h2>
+      <h2>Đang tải thị trường...</h2> 
     </main>
   )
   return (
@@ -59,13 +83,15 @@ const Home = ({ marketplace, nft }) => {
             {items.map((item, idx) => (
               <Col key={idx} className="overflow-hidden">
                 <Card>
-                  <Card.Img variant="top" src={item.image} />
+                  <Card.Img variant="top"  src={item.image} />
                   <Card.Body color="secondary">
                     <Card.Title>{item.name}</Card.Title>
                     <Card.Text>
-                      {item.description}
+                      Địa chỉ: {item.description}
                     </Card.Text>
+                   <Card.Text>Nguồn gốc: {item.seller}</Card.Text>
                   </Card.Body>
+              
                   <Card.Footer>
                     <div className='d-grid'>
                       <Button onClick={() => buyMarketItem(item)} variant="primary" size="lg">

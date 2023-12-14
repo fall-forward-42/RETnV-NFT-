@@ -5,6 +5,7 @@ import { Row, Col, Card } from 'react-bootstrap'
 export default function MyPurchases({ marketplace, nft, account }) {
   const [loading, setLoading] = useState(true)
   const [purchases, setPurchases] = useState([])
+
   const loadPurchasedItems = async () => {
     // Fetch purchased items from marketplace by quering Offered events with the buyer set as the user
     const filter =  marketplace.filters.Bought(null,null,null,null,null,account)
@@ -16,8 +17,8 @@ export default function MyPurchases({ marketplace, nft, account }) {
       // get uri url from nft contract
       const uri = await nft.tokenURI(i.tokenId)
       // use uri to fetch the nft metadata stored on ipfs 
-      const response = await fetch(uri)
-      const metadata = await response.json()
+       const response = await fetch('https://'+ uri)//get values of the uri 
+        const metadata = await response.json() //IPFS storage
       // get total price of item (item price + fee)
       const totalPrice = await marketplace.getTotalPrice(i.itemId)
       // define listed item object
@@ -27,19 +28,21 @@ export default function MyPurchases({ marketplace, nft, account }) {
         itemId: i.itemId,
         name: metadata.name,
         description: metadata.description,
-        image: metadata.image
+        image: 'https://'+ metadata.image
       }
       return purchasedItem
     }))
     setLoading(false)
     setPurchases(purchases)
   }
+
   useEffect(() => {
     loadPurchasedItems()
   }, [])
+
   if (loading) return (
     <main style={{ padding: "1rem 0" }}>
-      <h2>Loading...</h2>
+      <h2>Đang tải dữ liệu tài sản...</h2>
     </main>
   )
   return (
@@ -51,15 +54,21 @@ export default function MyPurchases({ marketplace, nft, account }) {
               <Col key={idx} className="overflow-hidden">
                 <Card>
                   <Card.Img variant="top" src={item.image} />
+                  <Card.Body color="secondary">
+                  <Card.Title>{item.name}</Card.Title>
+                    <Card.Text>
+                      Địa chỉ: {item.description}
+                    </Card.Text>
+                  </Card.Body>
                   <Card.Footer>{ethers.utils.formatEther(item.totalPrice)} ETH</Card.Footer>
                 </Card>
               </Col>
             ))}
-          </Row>
+          </Row> 
         </div>
         : (
           <main style={{ padding: "1rem 0" }}>
-            <h2>No purchases</h2>
+            <h2>Chưa giao dịch và mua bán tài sản nào.</h2>
           </main>
         )}
     </div>

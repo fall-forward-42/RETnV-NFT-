@@ -10,7 +10,27 @@ const Create = ({ marketplace, nft }) => {
   const [description, setDescription] = useState('')
   const pinataJSONEndpoint = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
   const pinataFileEndpoint = 'https://api.pinata.cloud/pinning/pinFileToIPFS';  
- 
+  const pinataApiKey = '02724595cdea842971f1';
+  const pinataSecretApiKey = '82cfaeeab5bac494da2a034ec5e28f3292ce10dd62faff011a55c70201c042b1';
+  const JWTtoken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI4M2VkODc5OC01NDM1LTQzMWYtOWQ1MS1mYTkxZDBmOWI5MWIiLCJlbWFpbCI6ImxlaGFpdGllbjQyMjAwM2RldkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMDI3MjQ1OTVjZGVhODQyOTcxZjEiLCJzY29wZWRLZXlTZWNyZXQiOiI4MmNmYWVlYWI1YmFjNDk0ZGEyYTAzNGVjNWUyOGYzMjkyY2UxMGRkNjJmYWZmMDExYTU1YzcwMjAxYzA0MmIxIiwiaWF0IjoxNzAyMjgyODkzfQ.vitS-78vgAfST-RIR4iGE_zv2YLNnwI4Xb1THAw8i3o';
+  const gateway = 'fuchsia-tropical-viper-783.mypinata.cloud/ipfs/'
+  const testAuthentication = () => {
+    const url = `https://api.pinata.cloud/data/testAuthentication`;
+    return axios
+        .get(url, {
+            headers: {
+                'pinata_api_key': pinataApiKey,
+                'pinata_secret_api_key': pinataSecretApiKey
+            }
+        })
+        .then(function (response) {
+          alert("success to connect")
+        })
+        .catch(function (error) {
+          alert("Fail to connect")
+        })
+      }
+
   const uploadToIPFS = async (event) => {
     event.preventDefault()
     const file = event.target.files[0]
@@ -19,22 +39,21 @@ const Create = ({ marketplace, nft }) => {
           // Using axios to pin file to Pinata
           const formData = new FormData();
           formData.append('file', file);
-          const pinataApiKey = '552ae2104ec19063bd47';
-          const pinataSecretApiKey = '7a07bf165aabd3d63d20713615cc424c7136d3352287a61b931351fee69cf0a5';
-          const JWTtoken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI4M2VkODc5OC01NDM1LTQzMWYtOWQ1MS1mYTkxZDBmOWI5MWIiLCJlbWFpbCI6ImxlaGFpdGllbjQyMjAwM2RldkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiNTUyYWUyMTA0ZWMxOTA2M2JkNDciLCJzY29wZWRLZXlTZWNyZXQiOiI3YTA3YmYxNjVhYWJkM2Q2M2QyMDcxMzYxNWNjNDI0YzcxMzZkMzM1MjI4N2E2MWI5MzEzNTFmZWU2OWNmMGE1IiwiaWF0IjoxNzAxODU5NjA2fQ.X5eWwsouQ-QJfHYLwk7KGdAUzdQGDtrQ2_g___Iakmc';
+
         
           const response = await axios.post(pinataFileEndpoint, formData, {
             headers: {
-              'Content-Type': 'multipart/form-data',
+              'Content-Type': `multipart/form-data; boundary= ${formData._boundary}`,
               'pinata_api_key': pinataApiKey,
               'pinata_secret_api_key': pinataSecretApiKey,
               'Authorization' :  `Bearer ${JWTtoken}`
             },
           });
-  
-          console.log(response.data);
-          setImage(`https://blush-cheerful-sparrow-995.mypinata.cloud/ipfs/${response.data.IpfsHash}`);
-        
+          const urlFile = gateway+response.data.IpfsHash;
+          setImage(urlFile);//the link to view the file
+          console.log("The file of NFT :"+ urlFile);
+
+
       } catch (error){
         console.log("ipfs image upload error: ", error)
       }
@@ -47,12 +66,10 @@ const Create = ({ marketplace, nft }) => {
     try{
       //save info of items
       const metadata = JSON.stringify({image,price,name,description})
-      console.log("data before post JSON IPFS: "+metadata)
+     
+
+
       //post on pinata
-      const pinataApiKey = '552ae2104ec19063bd47';
-      const pinataSecretApiKey = '7a07bf165aabd3d63d20713615cc424c7136d3352287a61b931351fee69cf0a5';
-      const JWTtoken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI4M2VkODc5OC01NDM1LTQzMWYtOWQ1MS1mYTkxZDBmOWI5MWIiLCJlbWFpbCI6ImxlaGFpdGllbjQyMjAwM2RldkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiNTUyYWUyMTA0ZWMxOTA2M2JkNDciLCJzY29wZWRLZXlTZWNyZXQiOiI3YTA3YmYxNjVhYWJkM2Q2M2QyMDcxMzYxNWNjNDI0YzcxMzZkMzM1MjI4N2E2MWI5MzEzNTFmZWU2OWNmMGE1IiwiaWF0IjoxNzAxODU5NjA2fQ.X5eWwsouQ-QJfHYLwk7KGdAUzdQGDtrQ2_g___Iakmc';
-    
       const response = await axios.post(pinataJSONEndpoint, metadata, {
         headers: {
           'Content-Type': 'application/json',
@@ -62,9 +79,12 @@ const Create = ({ marketplace, nft }) => {
         },
       });
 
-      const ipfsHashInfoItem = response.data.IpfsHash;
 
-      mintThenList(ipfsHashInfoItem) //create new nft
+      const ipfsHashInfoItem = response.data.IpfsHash; //hash the data was posted
+      const urlNFT = gateway+ipfsHashInfoItem;
+      console.log("The url of item NFT "+urlNFT)
+
+      mintThenList(urlNFT) //create new nft
 
 
     } catch(error) {
@@ -73,7 +93,7 @@ const Create = ({ marketplace, nft }) => {
   }
 
   const mintThenList = async (result) => {
-    const uri = `https://blush-cheerful-sparrow-995.mypinata.cloud/ipfs/${result.IpfsHash}`
+    const uri = result
     // mint nft 
     await(await nft.mint(uri)).wait()
     // get tokenId of new nft 
@@ -104,6 +124,7 @@ const Create = ({ marketplace, nft }) => {
                   Tạo mới và thêm vào danh sách tài sản
                 </Button>
               </div>
+              <Button onClick={testAuthentication}>Test IFPS </Button>
             </Row>
           </div>
         </main>
