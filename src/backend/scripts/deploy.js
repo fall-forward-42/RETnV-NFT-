@@ -20,7 +20,7 @@ async function main() {
   saveFrontendFiles(nft , "NFT");
 }
 
-function saveFrontendFiles(contract, name) {
+function saveFrontendFiles(contract, name) { //gửi ABI của smart contract đã deploy qua cho front end
   const fs = require("fs");
   const contractsDir = __dirname + "/../../frontend/contractsData";
 
