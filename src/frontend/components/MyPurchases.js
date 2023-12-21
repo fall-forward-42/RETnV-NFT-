@@ -47,12 +47,13 @@ export default function MyPurchases({ marketplace, nft, account }) {
   )
   return (
     <div className="flex justify-center">
+      <h2 className='mt-3'>Tài sản đã mua</h2>
       {purchases.length > 0 ?
         <div className="px-5 container">
           <Row xs={1} md={2} lg={4} className="g-4 py-5">
             {purchases.map((item, idx) => (
               <Col key={idx} className="overflow-hidden">
-                <Card>
+                <Card className='card-nft'>
                   <Card.Img variant="top" src={item.image} />
                   <Card.Body color="secondary">
                   <Card.Title>{item.name}</Card.Title>

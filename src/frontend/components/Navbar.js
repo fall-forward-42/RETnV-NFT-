@@ -3,22 +3,26 @@ import {
 } from "react-router-dom";
 import { Navbar, Nav, Button, Container } from 'react-bootstrap'
 import market from './market.png'
+import logo from '../components/img/iconLogo.png'
+import { HiHomeModern,HiCloudArrowUp,HiMiniInboxStack ,HiTrophy ,HiWallet   } from "react-icons/hi2";
 
 const Navigation = ({ web3Handler, account }) => {
     return (
-        <Navbar expand="lg" bg="secondary" variant="dark">
+        <Navbar expand="lg" bg="dark" variant="dark">
             <Container>
-                <Navbar.Brand href="http://www.dappuniversity.com/bootcamp">
-                    <img src={market} width="40" height="40" className="" alt="" />
-                    &nbsp; DApp NFT Marketplace
+                <Navbar.Brand href="/">
+                    <img src={logo} width="40" height="40" className="" alt="" />
+                    &nbsp; Real Estate Transactions and Verification
                 </Navbar.Brand>
+
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/">Trang chủ</Nav.Link>
-                        <Nav.Link as={Link} to="/create">Tạo mới</Nav.Link>
-                        <Nav.Link as={Link} to="/my-listed-items">Danh sách của tôi</Nav.Link>
-                        <Nav.Link as={Link} to="/my-purchases">Tài sản của tôi</Nav.Link>
+                        <Nav.Link as={Link} to="/"><HiHomeModern /> Trang chủ</Nav.Link>
+                        <Nav.Link as={Link} to="/create"><HiCloudArrowUp /> Tạo mới</Nav.Link>
+                        <Nav.Link as={Link} to="/my-listed-items"><HiMiniInboxStack /> Danh sách của tôi</Nav.Link>
+                        <Nav.Link as={Link} to="/my-purchases"><HiTrophy /> Sở hữu</Nav.Link>
                     </Nav>
                     <Nav>
                         {account ? (
@@ -33,7 +37,7 @@ const Navigation = ({ web3Handler, account }) => {
 
                             </Nav.Link>
                         ) : (
-                            <Button onClick={web3Handler} variant="outline-light">Kết nối đến ví ngay</Button>
+                            <Button onClick={web3Handler} variant="outline-light">Kết nối đến ví ngay <HiWallet /></Button>
                         )}
                     </Nav>
                 </Navbar.Collapse>

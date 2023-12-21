@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+.card-nft{
+    height: 100%;
+    width: 100%;
+    transition: linear 0.3s;
+}
+
+.card-nft:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  cursor: pointer;
+  transform: scale(95%);
+}
+.card-nft:hover .btn-buy{
+  background-color: rgb(71, 71, 32);
+  border: none;
+  transition: linear 0.3s;
+}
+

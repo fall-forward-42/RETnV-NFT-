@@ -9,7 +9,7 @@ function renderSoldItems(items) {
       <Row xs={1} md={2} lg={4} className="g-4 py-3">
         {items.map((item, idx) => (
           <Col key={idx} className="overflow-hidden">
-            <Card>
+            <Card className='card-nft'>
               <Card.Img variant="top" src={item.image} />
               <Card.Body color="secondary">
               <Card.Title>{item.name}</Card.Title>
@@ -85,7 +85,7 @@ export default function MyListedItems({ marketplace, nft, account }) {
           <Row xs={1} md={2} lg={4} className="g-4 py-3">
             {listedItems.map((item, idx) => (
               <Col key={idx} className="overflow-hidden">
-                <Card>
+                <Card className='card-nft'>
                   <Card.Img variant="top" src={item.image} />
                   <Card.Body color="secondary">
                   <Card.Title>{item.name}</Card.Title>

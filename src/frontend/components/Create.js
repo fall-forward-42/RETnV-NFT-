@@ -1,9 +1,18 @@
-import { useState } from 'react'
+import { useState , CSSProperties} from 'react'
 import { ethers } from "ethers"
 import { Row, Form, Button } from 'react-bootstrap'
 import axios from 'axios'
+import RingLoader from "react-spinners/RingLoader";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 //import pinataSDK from '@pinata/sdk';
+const override: CSSProperties = {
+  display: "block",
+  margin: "auto auto",
+  borderColor: "red",
+};
 const Create = ({ marketplace, nft }) => {
+  let [loading, setLoading] = useState();
   const [image, setImage] = useState('')
   const [price, setPrice] = useState(null)
   const [name, setName] = useState('')
@@ -24,14 +33,33 @@ const Create = ({ marketplace, nft }) => {
             }
         })
         .then(function (response) {
-          alert("success to connect")
+          toast('Kết nối cơ sở lưu trữ phân tán thành công !', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
         })
         .catch(function (error) {
-          alert("Fail to connect")
+          toast.warn('Kết nối cơ sở lưu trữ phân tán thất bại !!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
         })
       }
 
   const uploadToIPFS = async (event) => {
+    
     event.preventDefault()
     const file = event.target.files[0]
     if (typeof file !== 'undefined') {
@@ -62,7 +90,20 @@ const Create = ({ marketplace, nft }) => {
 
 
   const createNFT = async () => {
-    if (!image || !price || !name || !description) return
+    
+    if (!image || !price || !name || !description){
+      toast.error("Vui lòng nhập đủ thông tin!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+      return
+    } 
     try{
       //save info of items
       const metadata = JSON.stringify({image,price,name,description})
@@ -83,7 +124,7 @@ const Create = ({ marketplace, nft }) => {
       const ipfsHashInfoItem = response.data.IpfsHash; //hash the data was posted
       const urlNFT = gateway+ipfsHashInfoItem;
       console.log("The url of item NFT "+urlNFT)
-
+      
       mintThenList(urlNFT) //create new nft
 
 
@@ -93,6 +134,8 @@ const Create = ({ marketplace, nft }) => {
   }
 
   const mintThenList = async (result) => {
+    setLoading(true);
+    //////////////////////////lack of progress bar
     const uri = result
     // mint nft 
     await(await nft.mint(uri)).wait()
@@ -103,9 +146,34 @@ const Create = ({ marketplace, nft }) => {
     // add nft to marketplace
     const listingPrice = ethers.utils.parseEther(price.toString())
     await(await marketplace.makeItem(nft.address, id, listingPrice)).wait()
+    setLoading(false);
+    toast('🦄 Đào thành công !', {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
   }
+  
   return (
     <div className="container-fluid mt-5">
+    <ToastContainer />
+    {
+      loading ?
+      <RingLoader
+        color={"#2d4d51"}
+        loading={loading}
+        size={300}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+        cssOverride={override}
+
+      />
+      :
       <div className="row">
         <main role="main" className="col-lg-12 mx-auto" style={{ maxWidth: '1000px' }}>
           <div className="content mx-auto">
@@ -120,15 +188,16 @@ const Create = ({ marketplace, nft }) => {
               <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Chi tiết sản phẩm" />
               <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Giá bằng ETH" />
               <div className="d-grid px-0">
-                <Button onClick={createNFT} variant="primary" size="lg">
+                <Button onClick={createNFT} variant="dark" size="lg">
                   Tạo mới và thêm vào danh sách tài sản
                 </Button>
               </div>
-              <Button onClick={testAuthentication}>Test IFPS </Button>
+              <Button variant="dark" onClick={testAuthentication}>Test IFPS </Button>
             </Row>
           </div>
         </main>
       </div>
+    }
     </div>
   );
 }
