@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/RETnV-NFT-/static/css/main.14da31c1.css",
+    "main.js": "/RETnV-NFT-/static/js/main.0966922a.js",
+    "index.html": "/RETnV-NFT-/index.html",
+    "main.14da31c1.css.map": "/RETnV-NFT-/static/css/main.14da31c1.css.map",
+    "main.0966922a.js.map": "/RETnV-NFT-/static/js/main.0966922a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.14da31c1.css",
+    "static/js/main.0966922a.js"
+  ]
+}
