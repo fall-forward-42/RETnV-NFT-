@@ -1,4 +1,6 @@
-# NFT Marketplace
+#  Real Estate Transactions and Verification
+Ứng dụng blockchain trong Quản lý dự án bất động sản
+
 
 ## Technology Stack & Tools
 
@@ -6,7 +8,7 @@
 - Javascript (React & Testing)
 - [Ethers](https://docs.ethers.io/v5/) (Blockchain Interaction)
 - [Hardhat](https://hardhat.org/) (Development Framework)
-- [Ipfs](https://ipfs.io/) (Metadata storage)
+- [Ipfs](https://ipfs.io/) (Metadata storage) - I use Pinata for IPFS 
 - [React routers](https://v5.reactrouter.com/) (Navigational components)
 
 ## Requirements For Initial Setup
@@ -34,7 +36,11 @@ $ npx hardhat node
 
 
 ### 5. Migrate Smart Contracts
-`npx hardhat run src/backend/scripts/deploy.js --network localhost`
+`npx hardhat run src/backend/scripts/deploy.js --network localhost` 
+In this project I config network is the Sepolia testnet so try:
+`npx hardhat run src/backend/scripts/deploy.js --network sepolia` 
+The deplyed NFT smart contract: "https://sepolia.etherscan.io/address/0xD1D2e91a8f625100e1456675b49c358291Bc537f"
+The deplyed marketplace smart contract: "https://sepolia.etherscan.io/address/0x85b5706AfEa8E52153cc163599b2A0cd1BDD555c"
 
 ### 6. Run Tests
 `$ npx hardhat test`
